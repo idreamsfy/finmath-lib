@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 09.02.2004
  */
@@ -862,6 +862,15 @@ public class LIBORMarketModel extends AbstractModel implements LIBORMarketModelI
 		return value;
 	}
 
+	@Override
+	public RandomVariableInterface applyStateSpaceTransformInverse(int componentIndex, RandomVariableInterface randomVariable) {
+		RandomVariableInterface value = randomVariable;
+
+		if(stateSpace == StateSpace.LOGNORMAL)	value = value.log();
+
+		return value;
+	}
+
 	/* (non-Javadoc)
 	 * @see net.finmath.montecarlo.model.AbstractModelInterface#getRandomVariableForConstant(double)
 	 */
@@ -953,7 +962,7 @@ public class LIBORMarketModel extends AbstractModel implements LIBORMarketModelI
 		if(periodStartIndex+1==periodEndIndex) return getLIBOR(timeIndex, periodStartIndex);
 
 		// The requested LIBOR is not a model primitive. We need to calculate it (slow!)
-		RandomVariableInterface accrualAccount = getProcess().getStochasticDriver().getRandomVariableForConstant(1.0);
+		RandomVariableInterface accrualAccount = null; //=randomVariableFactory.createRandomVariable(1.0);
 
 		// Calculate the value of the forward bond
 		for(int periodIndex = periodStartIndex; periodIndex<periodEndIndex; periodIndex++)
@@ -961,7 +970,7 @@ public class LIBORMarketModel extends AbstractModel implements LIBORMarketModelI
 			double subPeriodLength = getLiborPeriod(periodIndex+1) - getLiborPeriod(periodIndex);
 			RandomVariableInterface liborOverSubPeriod = getLIBOR(timeIndex, periodIndex);
 
-			accrualAccount = accrualAccount.accrue(liborOverSubPeriod, subPeriodLength);
+			accrualAccount = accrualAccount == null ? liborOverSubPeriod.mult(subPeriodLength).add(1.0) : accrualAccount.accrue(liborOverSubPeriod, subPeriodLength);
 		}
 
 		RandomVariableInterface libor = accrualAccount.sub(1.0).div(periodEnd - periodStart);
@@ -1079,7 +1088,7 @@ public class LIBORMarketModel extends AbstractModel implements LIBORMarketModelI
 			Map<String, Object> properties = new HashMap<String, Object>();
 			properties.put("measure",		measure.name());
 			properties.put("stateSpace",	stateSpace.name());
-			return new LIBORMarketModel(getLiborPeriodDiscretization(), getAnalyticModel(), getForwardRateCurve(), getDiscountCurve(), covarianceModel, new CalibrationItem[0], properties);
+			return new LIBORMarketModel(getLiborPeriodDiscretization(), getAnalyticModel(), getForwardRateCurve(), getDiscountCurve(), randomVariableFactory, covarianceModel, new CalibrationItem[0], properties);
 		} catch (CalculationException e) {
 			return null;
 		}

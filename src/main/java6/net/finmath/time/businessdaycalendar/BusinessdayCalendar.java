@@ -6,8 +6,9 @@
 
 package net.finmath.time.businessdaycalendar;
 
-import org.threeten.bp.LocalDate;
 import java.util.StringTokenizer;
+
+import org.threeten.bp.LocalDate;
 
 /**
  * Base class for all business day calendars.
@@ -18,6 +19,8 @@ import java.util.StringTokenizer;
  * @author Christian Fries
  */
 public abstract class BusinessdayCalendar implements BusinessdayCalendarInterface {
+
+	private static final long serialVersionUID = -970677373015282512L;
 
 	/* (non-Javadoc)
 	 * @see net.finmath.time.BusinessdayCalendarInterface#getAdjustedDate(org.threeten.bp.LocalDate, net.finmath.time.BusinessdayCalendarInterface.DateRollConvention)

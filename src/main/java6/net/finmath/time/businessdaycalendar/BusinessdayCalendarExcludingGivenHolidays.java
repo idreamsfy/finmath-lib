@@ -1,15 +1,19 @@
 package net.finmath.time.businessdaycalendar;
 
 import java.util.Set;
+
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 
 /**
- * A business day calendar, where every day is a business day, except for weekends and New York City holidays
- * 
+ * An abstract base class for a business day calendar, where every day is a business day, except
+ * weekends days provided by a <code>Set</code> provided by the method <code>getHolidays</code>.
+ *
  * @author Christian Fries
  */
 public abstract class BusinessdayCalendarExcludingGivenHolidays extends BusinessdayCalendar {
+
+	private static final long serialVersionUID = -7060298609732249650L;
 
 	private final String name;
 	private final BusinessdayCalendarInterface baseCalendar;

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 10.02.2004
  */
@@ -54,7 +54,7 @@ import net.finmath.time.TimeDiscretizationInterface;
 @RunWith(Parameterized.class)
 public class LIBORMarketModelMultiCurveValuationTest {
 
-	@Parameters
+	@Parameters(name="{0}")
 	public static Collection<Object[]> generateData()
 	{
 		return Arrays.asList(new Object[][] {

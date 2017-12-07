@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 09.06.2014
  */
@@ -149,6 +149,11 @@ public class MonteCarloMultiAssetBlackScholesModel extends AbstractModel impleme
 	@Override
 	public RandomVariableInterface applyStateSpaceTransform(int componentIndex, RandomVariableInterface randomVariable) {
 		return randomVariable.exp();
+	}
+
+	@Override
+	public RandomVariableInterface applyStateSpaceTransformInverse(int componentIndex, RandomVariableInterface randomVariable) {
+		return randomVariable.log();
 	}
 
 	@Override

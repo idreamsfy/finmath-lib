@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 30.11.2012
  */
@@ -29,11 +29,11 @@ import net.finmath.marketdata.products.Deposit;
 import net.finmath.marketdata.products.ForwardRateAgreement;
 import net.finmath.marketdata.products.Swap;
 import net.finmath.marketdata.products.SwapLeg;
-import net.finmath.marketdata.products.SwapLegWithResetting;
 import net.finmath.optimizer.SolverException;
 import net.finmath.time.RegularSchedule;
 import net.finmath.time.ScheduleInterface;
 import net.finmath.time.TimeDiscretization;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Generate a collection of calibrated curves (discount curves, forward curves)
@@ -63,12 +63,12 @@ import net.finmath.time.TimeDiscretization;
  * 	</tr>
  * 	<tr>
  * 		<td>swapwithresetonreceiver</td>
- * 		<td>{@link net.finmath.marketdata.products.SwapLeg}, {@link net.finmath.marketdata.products.SwapLegWithResetting}</td>
+ * 		<td>{@link net.finmath.marketdata.products.SwapLeg}</td>
  * 		<td></td>
  * 	</tr>
  * 	<tr>
  * 		<td>swapwithresetonpayer</td>
- * 		<td>{@link net.finmath.marketdata.products.SwapLeg}, {@link net.finmath.marketdata.products.SwapLegWithResetting}</td>
+ * 		<td>{@link net.finmath.marketdata.products.SwapLeg}</td>
  * 		<td></td>
  * 	</tr>
  * 	<tr>
@@ -278,6 +278,11 @@ public class CalibratedCurves {
 					+ discountCurvePayerName + ", calibrationCurveName=" + calibrationCurveName + ", calibrationTime="
 					+ calibrationTime + "]";
 		}
+
+		@NotNull
+		public String getSymbol() {
+			return symbol;
+		}
 	}
 
 	private AnalyticModelInterface				model				= new AnalyticModel();
@@ -442,7 +447,7 @@ public class CalibratedCurves {
 			createDiscountCurve(calibrationSpec.discountCurvePayerName);
 	
 			forwardCurveReceiverName	= createForwardCurve(calibrationSpec.swapTenorDefinitionReceiver, calibrationSpec.forwardCurveReceiverName);
-			forwardCurvePayerName		= createForwardCurve(calibrationSpec.swapTenorDefinitionPayer, calibrationSpec.forwardCurvePayerName);
+			forwardCurvePayerName	= createForwardCurve(calibrationSpec.swapTenorDefinitionPayer, calibrationSpec.forwardCurvePayerName);
 		}
 		else {
 			Predicate<String> discountCurveMissing = (String curveName) -> curveName != null && curveName.length() > 0 && model.getDiscountCurve(curveName) == null;
@@ -472,22 +477,20 @@ public class CalibratedCurves {
 			product = new SwapLeg(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, true);
 		}
 		else if(calibrationSpec.type.toLowerCase().equals("swap")) {
-			// note that a swap is always assumed to have a notional reset
-			// this does not have an effect on a "normal" swap where both legs have the same start and endDate and for both legs periodEnd(i)=periodStart(i+1) holds
 			SwapLeg	legReceiver	= new SwapLeg(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, true);
 			SwapLeg	legPayer	= new SwapLeg(tenorPayer, forwardCurvePayerName, calibrationSpec.spreadPayer, calibrationSpec.discountCurvePayerName, true);
 			product = new Swap(legReceiver, legPayer);
 		}
 		else if(calibrationSpec.type.toLowerCase().equals("swapwithresetonreceiver")) {
 			String discountCurveForNotionalResetName = calibrationSpec.discountCurvePayerName;
-			SwapLegWithResetting	legReceiver	= new SwapLegWithResetting(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, discountCurveForNotionalResetName, true);
-			SwapLeg					legPayer	= new SwapLeg(tenorPayer, forwardCurvePayerName, calibrationSpec.spreadPayer, calibrationSpec.discountCurvePayerName, true);
+			SwapLeg	legReceiver	= new SwapLeg(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, discountCurveForNotionalResetName, true);
+			SwapLeg	legPayer	= new SwapLeg(tenorPayer, forwardCurvePayerName, calibrationSpec.spreadPayer, calibrationSpec.discountCurvePayerName, true);
 			product = new Swap(legReceiver, legPayer);
 		}
 		else if(calibrationSpec.type.toLowerCase().equals("swapwithresetonpayer")) {
 			String discountCurveForNotionalResetName = calibrationSpec.discountCurveReceiverName;
-			SwapLeg					legReceiver	= new SwapLeg(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, true);
-			SwapLegWithResetting	legPayer	= new SwapLegWithResetting(tenorPayer, forwardCurvePayerName, calibrationSpec.spreadPayer, calibrationSpec.discountCurvePayerName, discountCurveForNotionalResetName, true);
+			SwapLeg	legReceiver	= new SwapLeg(tenorReceiver, forwardCurveReceiverName, calibrationSpec.spreadReceiver, calibrationSpec.discountCurveReceiverName, true);
+			SwapLeg	legPayer	= new SwapLeg(tenorPayer, forwardCurvePayerName, calibrationSpec.spreadPayer, calibrationSpec.discountCurvePayerName, discountCurveForNotionalResetName, true);
 			product = new Swap(legReceiver, legPayer);
 		}
 		
@@ -698,31 +701,22 @@ public class CalibratedCurves {
 		objectsToCalibrate.remove(calibrationCurveOld);
 
 		// Create and add new curve
-		CurveInterface calibrationCurve = null;
+		double valueGuess;
 		if(DiscountCurveInterface.class.isInstance(calibrationCurveOld)) {
-			@SuppressWarnings("unused")
-			double paymentTime	= calibrationSpec.swapTenorDefinitionReceiver.getPayment(calibrationSpec.swapTenorDefinitionReceiver.getNumberOfPeriods()-1);
-
-			// Build new curve with one additional point
-			calibrationCurve = calibrationCurveOld
-					.getCloneBuilder()
-					.addPoint(calibrationSpec.calibrationTime, 1.0, true)
-					.build();
+			valueGuess = 1.0;
 		}
 		else if(ForwardCurveInterface.class.isInstance(calibrationCurveOld)) {
-			// Build new curve with one additional point
-			calibrationCurve = calibrationCurveOld
-					.getCloneBuilder()
-					.addPoint(calibrationSpec.calibrationTime, 0.1, true)
-					.build();
+			valueGuess = 0.0;
 		}
 		else {
-			// Build new curve with one additional point
-			calibrationCurve = calibrationCurveOld
-					.getCloneBuilder()
-					.addPoint(calibrationSpec.calibrationTime, 1.0, true)
-					.build();
+			valueGuess = 1.0;
 		}
+
+		// Build new curve with one additional point
+		CurveInterface calibrationCurve = calibrationCurveOld
+					.getCloneBuilder()
+					.addPoint(calibrationSpec.calibrationTime, valueGuess, true)
+					.build();
 		model = model.addCurves(calibrationCurve);
 		objectsToCalibrate.add(calibrationCurve);
 

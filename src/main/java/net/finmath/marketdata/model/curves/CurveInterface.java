@@ -1,10 +1,11 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 30.11.2012
  */
 package net.finmath.marketdata.model.curves;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import net.finmath.marketdata.calibration.ParameterObjectInterface;
@@ -15,7 +16,7 @@ import net.finmath.marketdata.model.AnalyticModelInterface;
  * 
  * @author Christian Fries
  */
-public interface CurveInterface extends ParameterObjectInterface, Cloneable {
+public interface CurveInterface extends ParameterObjectInterface, Serializable, Cloneable {
 
 	/**
 	 * Get the name of the curve.

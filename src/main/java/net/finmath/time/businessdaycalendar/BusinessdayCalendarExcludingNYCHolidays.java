@@ -6,12 +6,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * A business day calendar, where every day is a business day, except for weekends and London holidays
+ * A business day calendar, where every day is a business day, except for weekends and New York holidays
  * 
  * @author Niklas Rodi
  */
 public class BusinessdayCalendarExcludingNYCHolidays extends BusinessdayCalendarExcludingGivenHolidays {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3512269252486431367L;
 	/*
 	 * Details of this calendar.
 	 * If you like to create a similar calendar, just duplicate this class and
@@ -32,14 +36,14 @@ public class BusinessdayCalendarExcludingNYCHolidays extends BusinessdayCalendar
 	}
 	
 	/**
-	 * Create LONDON business day calendar.
+	 * Create NEW YORK business day calendar.
 	 */
 	public BusinessdayCalendarExcludingNYCHolidays() {
 		this(null);
 	}
 
 	/**
-	 * Create LONDON business day calendar using a given business day calendar as basis.
+	 * Create NEW YORK business day calendar using a given business day calendar as basis.
 	 * 
 	 * @param baseCalendar Calendar of business days.
 	 */

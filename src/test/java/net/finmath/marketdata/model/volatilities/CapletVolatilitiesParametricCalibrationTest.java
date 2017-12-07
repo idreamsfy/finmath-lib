@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 30.11.2013
  */
@@ -58,7 +58,7 @@ public class CapletVolatilitiesParametricCalibrationTest {
 	 * 
 	 * @return Array of parameters.
 	 */
-	@Parameters
+	@Parameters(name="{1}")
 	public static Collection<Object[]> generateData()
 	{
 		return Arrays.asList(new Object[][] {

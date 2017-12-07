@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 09.02.2006
  */
@@ -508,6 +508,12 @@ public class RandomVariableLowMemory implements RandomVariableInterface {
 		else {
 			return Arrays.stream(getDoubleArray(realizations));
 		}
+	}
+
+	@Override
+	public Double doubleValue() {
+		if(isDeterministic()) return valueIfNonStochastic;
+		else throw new UnsupportedOperationException("The random variable is non-deterministic");
 	}
 
 	@Override

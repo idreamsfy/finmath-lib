@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 07.02.2014
  */
@@ -21,7 +21,7 @@ import net.finmath.time.TimeDiscretizationInterface;
 public class BlackScholesDeltaHedgedPortfolioTest {
 
 	private static boolean isPrintStatistics = true;
-	private static boolean isPrintHedgeErrorDistribution = true;
+	private static boolean isPrintHedgeErrorDistribution = false;
 	private static boolean isPrintHedgeFinalValues = false;
 
 	// Model properties
@@ -30,7 +30,7 @@ public class BlackScholesDeltaHedgedPortfolioTest {
 	private final double	volatility     = 0.30;
 
 	// Process discretization properties
-	private final int		numberOfPaths		= 100000;
+	private final int		numberOfPaths		= 50000;
 	private final int		numberOfTimeSteps	= 100;
 	private final double	timeHorizon 		= 5;
 

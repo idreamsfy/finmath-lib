@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 18.11.2012
  */
@@ -51,7 +51,7 @@ public class ProcessEulerScheme extends AbstractProcess {
 	}
 
 	public enum Scheme {
-		EULER, PREDICTOR_CORRECTOR
+		EULER, PREDICTOR_CORRECTOR, EULER_FUNCTIONAL
 	};
 
 	private IndependentIncrementsInterface stochasticDriver;
@@ -195,6 +195,8 @@ public class ProcessEulerScheme extends AbstractProcess {
 
 				Callable<RandomVariableInterface> worker = new  Callable<RandomVariableInterface>() {
 					public RandomVariableInterface call() throws SolverException {
+						if(scheme == Scheme.EULER_FUNCTIONAL) currentState[componentIndex] = applyStateSpaceTransformInverse(componentIndex, discreteProcess[timeIndex - 1][componentIndex]);
+
 						RandomVariableInterface[]	factorLoadings		= getFactorLoading(timeIndex - 1, componentIndex, discreteProcess[timeIndex - 1]);
 
 						// Check if the component process has stopped to evolve

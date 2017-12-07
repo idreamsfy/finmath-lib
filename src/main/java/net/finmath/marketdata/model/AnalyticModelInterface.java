@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 28.11.2012
  */
@@ -30,6 +30,13 @@ public interface AnalyticModelInterface extends ModelInterface, Cloneable {
 	 * @return The curve with the corresponding name, given that it is part of this model, otherwise null is return.
 	 */
 	CurveInterface getCurve(String name);
+
+	/**
+	 * Returns an unmodifiable map of all curves.
+	 *
+	 * @return Map of all curves.
+	 */
+	Map<String, CurveInterface> getCurves();
 
 	/**
 	 * Add a reference to a given curve under a given name to this model. It is not necessary that the name given agrees with

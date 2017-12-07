@@ -1,9 +1,11 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 17.02.2013
  */
 package net.finmath.marketdata.model.curves;
+
+import java.io.Serializable;
 
 import org.threeten.bp.LocalDate;
 
@@ -13,7 +15,9 @@ import org.threeten.bp.LocalDate;
  *  
  * @author Christian Fries
  */
-public abstract class AbstractCurve implements CurveInterface, Cloneable {
+public abstract class AbstractCurve implements CurveInterface, Serializable, Cloneable {
+
+	private static final long serialVersionUID = 584342257323693502L;
 
 	private	final	LocalDate	referenceDate;
 	private final	String		name;

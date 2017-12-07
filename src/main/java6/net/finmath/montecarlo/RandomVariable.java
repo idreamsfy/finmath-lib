@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 09.02.2006
  */
@@ -120,35 +120,23 @@ public class RandomVariable implements RandomVariableInterface {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#getFiltrationTime()
-	 */
 	@Override
 	public double getFiltrationTime() {
 		return time;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#get(int)
-	 */
 	@Override
 	public double get(int pathOrState) {
 		if(isDeterministic())   return valueIfNonStochastic;
 		else               		return realizations[pathOrState];
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#size()
-	 */
 	@Override
 	public int size() {
 		if(isDeterministic())    return 1;
 		else                     return realizations.length;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#getMin()
-	 */
 	@Override
 	public double getMin() {
 		if(isDeterministic()) return valueIfNonStochastic;
@@ -158,9 +146,6 @@ public class RandomVariable implements RandomVariableInterface {
 		return min;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#getMax()
-	 */
 	@Override
 	public double getMax() {
 		if(isDeterministic()) return valueIfNonStochastic;
@@ -170,6 +155,7 @@ public class RandomVariable implements RandomVariableInterface {
 		return max;
 	}
 
+	@Override
 	public double getAverage() {
 		if(isDeterministic())	return valueIfNonStochastic;
 		if(size() == 0)			return Double.NaN;
@@ -464,6 +450,12 @@ public class RandomVariable implements RandomVariableInterface {
 	}
 
 	@Override
+	public Double doubleValue() {
+		if(isDeterministic()) return valueIfNonStochastic;
+		else throw new UnsupportedOperationException("The random variable is non-deterministic");
+	}
+
+	@Override
 	public RandomVariableInterface apply(org.apache.commons.math3.analysis.UnivariateFunction function) {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = function.value(valueIfNonStochastic);
@@ -514,9 +506,6 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#sub(double)
-	 */
 	@Override
 	public RandomVariableInterface sub(double value) {
 		if(isDeterministic()) {
@@ -530,9 +519,6 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#mult(double)
-	 */
 	@Override
 	public RandomVariableInterface mult(double value) {
 		if(isDeterministic()) {
@@ -572,17 +558,11 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#average()
-	 */
 	@Override
 	public RandomVariableInterface average() {
 		return new RandomVariable(getAverage());
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#getConditionalExpectation(net.finmath.stochastic.ConditionalExpectationEstimatorInterface)
-	 */
 	@Override
 	public RandomVariableInterface getConditionalExpectation(ConditionalExpectationEstimatorInterface conditionalExpectationOperator)
 	{
@@ -615,6 +595,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariable exp() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = FastMath.exp(valueIfNonStochastic);
@@ -627,6 +608,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariable log() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = FastMath.log(valueIfNonStochastic);
@@ -639,9 +621,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#sin()
-	 */
+	@Override
 	public RandomVariableInterface sin() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = FastMath.sin(valueIfNonStochastic);
@@ -654,6 +634,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariableInterface cos() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = FastMath.cos(valueIfNonStochastic);
@@ -666,6 +647,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariableInterface add(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -682,9 +664,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#sub(net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface sub(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -705,6 +685,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariableInterface mult(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -723,9 +704,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#div(net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface div(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -746,9 +725,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#cap(net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface cap(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -765,9 +742,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#floor(net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface floor(RandomVariableInterface randomVariable) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, randomVariable.getFiltrationTime());
@@ -784,9 +759,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#accrue(net.finmath.stochastic.RandomVariableInterface, double)
-	 */
+	@Override
 	public RandomVariableInterface accrue(RandomVariableInterface rate, double periodLength) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, rate.getFiltrationTime());
@@ -815,9 +788,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#discount(net.finmath.stochastic.RandomVariableInterface, double)
-	 */
+	@Override
 	public RandomVariableInterface discount(RandomVariableInterface rate, double periodLength) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, rate.getFiltrationTime());
@@ -846,9 +817,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#barrier(net.finmath.stochastic.RandomVariableInterface, net.finmath.stochastic.RandomVariableInterface, net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface barrier(RandomVariableInterface trigger, RandomVariableInterface valueIfTriggerNonNegative, RandomVariableInterface valueIfTriggerNegative) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, trigger.getFiltrationTime());
@@ -869,13 +838,12 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
+	@Override
 	public RandomVariableInterface barrier(RandomVariableInterface trigger, RandomVariableInterface valueIfTriggerNonNegative, double valueIfTriggerNegative) {
 		return this.barrier(trigger, valueIfTriggerNonNegative, new RandomVariable(valueIfTriggerNonNegative.getFiltrationTime(), valueIfTriggerNegative));
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#invert()
-	 */
+	@Override
 	public RandomVariableInterface invert() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = 1.0/valueIfNonStochastic;
@@ -888,9 +856,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#abs()
-	 */
+	@Override
 	public RandomVariableInterface abs() {
 		if(isDeterministic()) {
 			double newValueIfNonStochastic = Math.abs(valueIfNonStochastic);
@@ -903,9 +869,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#addProduct(net.finmath.stochastic.RandomVariableInterface, double)
-	 */
+	@Override
 	public RandomVariableInterface addProduct(RandomVariableInterface factor1, double factor2) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(time, factor1.getFiltrationTime());
@@ -934,9 +898,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#addProduct(net.finmath.stochastic.RandomVariableInterface, net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface addProduct(RandomVariableInterface factor1, RandomVariableInterface factor2) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(Math.max(time, factor1.getFiltrationTime()), factor2.getFiltrationTime());
@@ -976,9 +938,7 @@ public class RandomVariable implements RandomVariableInterface {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#addRatio(net.finmath.stochastic.RandomVariableInterface, net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface addRatio(RandomVariableInterface numerator, RandomVariableInterface denominator) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(Math.max(time, numerator.getFiltrationTime()), denominator.getFiltrationTime());
@@ -994,9 +954,7 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#subRatio(net.finmath.stochastic.RandomVariableInterface, net.finmath.stochastic.RandomVariableInterface)
-	 */
+	@Override
 	public RandomVariableInterface subRatio(RandomVariableInterface numerator, RandomVariableInterface denominator) {
 		// Set time of this random variable to maximum of time with respect to which measurability is known.
 		double newTime = Math.max(Math.max(time, numerator.getFiltrationTime()), denominator.getFiltrationTime());
@@ -1012,9 +970,6 @@ public class RandomVariable implements RandomVariableInterface {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.stochastic.RandomVariableInterface#isNaN()
-	 */
 	@Override
 	public RandomVariableInterface isNaN() {
 		if(isDeterministic()) {

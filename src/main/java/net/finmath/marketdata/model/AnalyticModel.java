@@ -1,11 +1,13 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 28.11.2012
  */
 package net.finmath.marketdata.model;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,7 +28,9 @@ import net.finmath.marketdata.model.volatilities.VolatilitySurfaceInterface;
  * 
  * @author Christian Fries
  */
-public class AnalyticModel implements AnalyticModelInterface, Cloneable {
+public class AnalyticModel implements AnalyticModelInterface, Serializable, Cloneable {
+
+	private static final long serialVersionUID = 6906386712907555046L;
 
 	private final Map<String, CurveInterface>				curvesMap				= new HashMap<String, CurveInterface>();
 	private final Map<String, VolatilitySurfaceInterface>	volatilitySurfaceMap	= new HashMap<String, VolatilitySurfaceInterface>();
@@ -55,13 +59,16 @@ public class AnalyticModel implements AnalyticModelInterface, Cloneable {
 		for(CurveInterface curve : curves) curvesMap.put(curve.getName(), curve);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.finmath.marketdata.model.AnalyticModelInterface#getCurve(java.lang.String)
-	 */
 	@Override
 	public CurveInterface getCurve(String name)
 	{
 		return curvesMap.get(name);
+	}
+
+	@Override
+	public  Map<String, CurveInterface> getCurves()
+	{
+		return Collections.unmodifiableMap(curvesMap);
 	}
 
 	public AnalyticModelInterface addCurve(String name, CurveInterface curve) {

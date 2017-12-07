@@ -1,15 +1,20 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 28.11.2012
  */
 package net.finmath.marketdata.model.curves;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,8 +22,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import net.finmath.marketdata.calibration.CalibratedCurves;
 import net.finmath.marketdata.calibration.ParameterObjectInterface;
 import net.finmath.marketdata.calibration.Solver;
+import net.finmath.marketdata.calibration.CalibratedCurves.CalibrationSpec;
 import net.finmath.marketdata.model.AnalyticModel;
 import net.finmath.marketdata.model.AnalyticModelInterface;
 import net.finmath.marketdata.model.curves.Curve.ExtrapolationMethod;
@@ -28,7 +35,11 @@ import net.finmath.marketdata.products.AnalyticProductInterface;
 import net.finmath.marketdata.products.Swap;
 import net.finmath.optimizer.SolverException;
 import net.finmath.time.RegularSchedule;
+import net.finmath.time.ScheduleGenerator;
+import net.finmath.time.ScheduleInterface;
 import net.finmath.time.TimeDiscretization;
+import net.finmath.time.businessdaycalendar.BusinessdayCalendarExcludingTARGETHolidays;
+import net.finmath.time.businessdaycalendar.BusinessdayCalendarInterface.DateRollConvention;
 
 /**
  * This class makes some basic tests related to the setup, use and calibration of discount curves and forward curve.
@@ -41,28 +52,28 @@ public class CalibrationTest {
 	static final double errorTolerance = 1E-14;
 
 	final InterpolationMethod interpolationMethod;
-	
+
 	public CalibrationTest(InterpolationMethod interpolationMethod)
 	{
 		this.interpolationMethod = interpolationMethod;
 	}
-	
+
 	/**
 	 * The parameters for this test, that is an error consisting of
 	 * { numberOfPaths, setup }.
 	 * 
 	 * @return Array of parameters.
 	 */
-	@Parameters
+	@Parameters(name="{0}")
 	public static Collection<Object[]> generateData()
 	{
 		return Arrays.asList(new Object[][] {
-				{ InterpolationMethod.LINEAR },
-				{ InterpolationMethod.CUBIC_SPLINE },
-				{ InterpolationMethod.AKIMA },
-				{ InterpolationMethod.AKIMA_CONTINUOUS },
-				{ InterpolationMethod.HARMONIC_SPLINE },
-				{ InterpolationMethod.HARMONIC_SPLINE_WITH_MONOTONIC_FILTERING },
+			{ InterpolationMethod.LINEAR },
+			{ InterpolationMethod.CUBIC_SPLINE },
+			{ InterpolationMethod.AKIMA },
+			{ InterpolationMethod.AKIMA_CONTINUOUS },
+			{ InterpolationMethod.HARMONIC_SPLINE },
+			{ InterpolationMethod.HARMONIC_SPLINE_WITH_MONOTONIC_FILTERING },
 		});
 	};
 
@@ -73,7 +84,7 @@ public class CalibrationTest {
 	 * @throws SolverException Thrown if the solver cannot find a solution to the calibration problem.
 	 */
 	public static void main(String[] args) throws SolverException {
-		
+
 		CalibrationTest calibrationTest = new CalibrationTest(InterpolationMethod.LINEAR);
 
 		calibrationTest.testForwardCurveFromDiscountCurve();
@@ -118,7 +129,7 @@ public class CalibrationTest {
 
 		System.out.println("__________________________________________________________________________________________\n");
 	}	
-	
+
 	@Test
 	public void testCurvesAndCalibration() throws SolverException {
 
@@ -127,7 +138,7 @@ public class CalibrationTest {
 		 * 
 		 * Note: Only maturity > 0 (DiscountCurve) and fixing > 0 (ForwardCurve) are calibration parameters (!)
 		 */
-		
+
 		System.out.println("Calibrating a discount curve from swaps (single-curve/self-discounting).");
 
 		// Create a discount curve
@@ -149,7 +160,7 @@ public class CalibrationTest {
 
 		// Create a collection of objective functions (calibration products)
 		Vector<AnalyticProductInterface> calibrationProducts1 = new Vector<AnalyticProductInterface>();
-		
+
 		calibrationProducts1.add(new Swap(new RegularSchedule(new TimeDiscretization(0.0, 1, 1.0)), null, 0.05, "discountCurve", new RegularSchedule(new TimeDiscretization(0.0, 1, 1.0)), forwardCurveFromDiscountCurve.getName(), 0.0, "discountCurve"));
 		calibrationProducts1.add(new Swap(new RegularSchedule(new TimeDiscretization(0.0, 2, 1.0)), null, 0.04, "discountCurve", new RegularSchedule(new TimeDiscretization(0.0, 2, 1.0)), forwardCurveFromDiscountCurve.getName(), 0.0, "discountCurve"));
 		calibrationProducts1.add(new Swap(new RegularSchedule(new TimeDiscretization(0.0, 8, 0.5)), null, 0.03, "discountCurve", new RegularSchedule(new TimeDiscretization(0.0, 8, 0.5)), forwardCurveFromDiscountCurve.getName(), 0.0, "discountCurve"));
@@ -190,13 +201,13 @@ public class CalibrationTest {
 
 		System.out.println("__________________________________________________________________________________________\n");
 
-		
+
 		/*
 		 * CALIBRATE A FORWARD CURVE, USING THE GIVEN DISCOUNT CURVE (MULTI-CURVE SETUP)
 		 * 
 		 * Note: Only maturity > 0 (DiscountCurve) and fixing > 0 (ForwardCurve) are calibration parameters (!)
 		 */
-		
+
 		// Create initial guess for the curve
 		ForwardCurve forwardCurve = ForwardCurve.createForwardCurveFromForwards("forwardCurve", new double[] {2.0/365.0, 1.0, 2.0, 3.0, 4.0}, new double[] {0.05, 0.05, 0.05, 0.05, 0.05}, model1, discountCurve.getName(), 0.5);
 
@@ -207,7 +218,7 @@ public class CalibrationTest {
 
 		// Create a collection of objective functions (calibration products)
 		Vector<AnalyticProductInterface> calibrationProducts2 = new Vector<AnalyticProductInterface>();
-			
+
 		// It is possible to mix tenors (although it may not be meaningful in a forward curve calibration)
 		calibrationProducts2.add(new Swap(new RegularSchedule(new TimeDiscretization(0.0, 1, 1.0)), null, 0.06, "discountCurve", new RegularSchedule(new TimeDiscretization(0.0, 1, 0.5)), "forwardCurve", 0.0, "discountCurve"));
 		calibrationProducts2.add(new Swap(new RegularSchedule(new TimeDiscretization(0.0, 2, 1.0)), null, 0.05, "discountCurve", new RegularSchedule(new TimeDiscretization(0.0, 2, 0.5)), "forwardCurve", 0.0, "discountCurve"));
@@ -230,7 +241,7 @@ public class CalibrationTest {
 		 * The model calibratedModel2 now contains a set of calibrated curves.
 		 * The curves are clones. The model model2 still contains the original curve.
 		 */
-	
+
 		// Calibration check
 		System.out.println("Calibration check:");
 		double error2 = 0;

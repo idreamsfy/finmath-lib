@@ -1,18 +1,17 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 07.09.2013
  */
 package net.finmath.time;
 
-import org.threeten.bp.LocalDate;
-import org.threeten.bp.Month;
 import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.threeten.bp.LocalDate;
+import org.threeten.bp.Month;
 
-import net.finmath.time.Period;
 import net.finmath.time.daycount.DayCountConventionInterface;
 import net.finmath.time.daycount.DayCountConvention_30E_360;
 import net.finmath.time.daycount.DayCountConvention_ACT_360;

@@ -1,11 +1,12 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 20.05.2005
  */
 package net.finmath.marketdata.model.curves;
 
 import java.io.Serializable;
+
 import org.threeten.bp.LocalDate;
 
 import net.finmath.marketdata.model.AnalyticModelInterface;
@@ -31,7 +32,7 @@ public class ForwardCurveFromDiscountCurve extends AbstractForwardCurve implemen
 
 	private static final long serialVersionUID = -4126228588123963885L;
 	private final String referenceDiscountCurveForForwardsName; // The (pseudo-)discount curve that the forwards are calculated from. Note that this is in general different from the discount curve associated with the forwards
-	
+
 	private final double daycountScaling;
 	private final double periodOffset;
 

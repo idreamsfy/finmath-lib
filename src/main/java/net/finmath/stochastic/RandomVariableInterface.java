@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 21.10.2007
  * Created on 02.02.2014
@@ -49,7 +49,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param randomVariable Random variable to compare with.
 	 * @return True if this random variable and the given one are equal, otherwise false
 	 */
-	public boolean equals(RandomVariableInterface randomVariable);
+	boolean equals(RandomVariableInterface randomVariable);
 
 	/**
 	 * Returns the filtration time.
@@ -89,6 +89,13 @@ public interface RandomVariableInterface extends Serializable {
 	 * @return Vector of realizations of this random variable.
 	 */
 	double[] getRealizations();
+
+	/**
+	 * Returns the double value if isDeterministic() is true. otherwise throws an {@link UnsupportedOperationException}.
+	 * 
+	 * @return The double value if isDeterministic() is true, otherwise throws an  an {@link UnsupportedOperationException}.
+	 */
+	Double doubleValue();
 
 	/**
 	 * Returns the operator path &rarr; this.get(path) corresponding to this random variable.
@@ -137,7 +144,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param probabilities The probability weights.
 	 * @return The average assuming the given probability weights.
 	 */
-	public double getAverage(RandomVariableInterface probabilities);
+	double getAverage(RandomVariableInterface probabilities);
 
 	/**
 	 * Returns the variance of this random variable, i.e.,
@@ -154,7 +161,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param probabilities The probability weights.
 	 * @return The average assuming the given probability weights.
 	 */
-	public double getVariance(RandomVariableInterface probabilities);
+	double getVariance(RandomVariableInterface probabilities);
 
 	/**
 	 * Returns the sample variance of this random variable, i.e.,
@@ -162,7 +169,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * 
 	 * @return The sample variance.
 	 */
-	public double getSampleVariance();
+	double getSampleVariance();
 	
 	/**
 	 * Returns the standard deviation of this random variable, i.e.,
@@ -179,7 +186,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param probabilities The probability weights.
 	 * @return The standard error assuming the given probability weights.
 	 */
-	public double getStandardDeviation(RandomVariableInterface probabilities);
+	double getStandardDeviation(RandomVariableInterface probabilities);
 
 	/**
 	 * Returns the standard error (discretization error) of this random variable.
@@ -196,7 +203,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param probabilities The probability weights.
 	 * @return The standard error assuming the given probability weights.
 	 */
-	public double getStandardError(RandomVariableInterface probabilities);
+	double getStandardError(RandomVariableInterface probabilities);
 
 	/**
 	 * Returns the quantile value for this given random variable, i.e., the value x such that P(this &lt; x) = quantile,
@@ -217,7 +224,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @param probabilities The probability weights.
 	 * @return The quantile value assuming the given probability weights.
 	 */
-	public double getQuantile(double quantile, RandomVariableInterface probabilities);
+	double getQuantile(double quantile, RandomVariableInterface probabilities);
 
 	/**
 	 * Returns the expectation over a quantile for this given random variable.
@@ -391,7 +398,7 @@ public interface RandomVariableInterface extends Serializable {
 	 * @return New random variable being the expectation of this random variable.
 	 */
 	RandomVariableInterface average();
-	
+
 	/**
 	 * Returns the conditional expectation using a given conditional expectation estimator.
 	 * 

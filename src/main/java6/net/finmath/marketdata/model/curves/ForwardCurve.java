@@ -1,16 +1,16 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 20.05.2005
  */
 package net.finmath.marketdata.model.curves;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.threeten.bp.Instant;
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
-import java.util.Date;
 
 import net.finmath.marketdata.model.AnalyticModelInterface;
 import net.finmath.time.businessdaycalendar.BusinessdayCalendarExcludingWeekends;
@@ -318,7 +318,7 @@ public class ForwardCurve extends AbstractForwardCurve implements Serializable {
 		}
 		}
 	}
-	
+
 	/**
 	 * Returns the forward for the corresponding fixing time.
 	 * 

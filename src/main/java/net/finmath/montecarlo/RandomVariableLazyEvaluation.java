@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 09.02.2006
  */
@@ -34,7 +34,12 @@ import net.finmath.stochastic.RandomVariableInterface;
  */
 public class RandomVariableLazyEvaluation implements RandomVariableInterface {
 
-    private final double            time;	                // Time (filtration)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8413020544732461630L;
+
+	private final double            time;	                // Time (filtration)
 
     // Operator
     private       IntToDoubleFunction   realizations;
@@ -478,7 +483,13 @@ public class RandomVariableLazyEvaluation implements RandomVariableInterface {
 	    }
     }
 
-    /* (non-Javadoc)
+	@Override
+	public Double doubleValue() {
+		if(isDeterministic()) return valueIfNonStochastic;
+		else throw new UnsupportedOperationException("The random variable is non-deterministic");
+	}
+
+	/* (non-Javadoc)
      * @see net.finmath.stochastic.RandomVariableInterface#getOperator()
      */
     @Override

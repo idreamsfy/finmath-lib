@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christian-fries.de.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 19.01.2004
  */
@@ -67,6 +67,11 @@ public abstract class AbstractProcess implements AbstractProcessInterface, Clone
     public RandomVariableInterface applyStateSpaceTransform(int componentIndex, RandomVariableInterface randomVariable) {
         // Delegate to model
         return model.applyStateSpaceTransform(componentIndex, randomVariable);
+    }
+
+    public RandomVariableInterface applyStateSpaceTransformInverse(int componentIndex, RandomVariableInterface randomVariable) {
+        // Delegate to model
+        return model.applyStateSpaceTransformInverse(componentIndex, randomVariable);
     }
 
 	/*
