@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christianfries.com.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 22.06.2014
  */
@@ -18,7 +18,7 @@ import net.finmath.marketdata.products.AnalyticProductInterface;
  * 
  * @author Christian Fries
  */
-public class UnsupportedProduct implements ProductInterface, AnalyticProductInterface, Serializable {
+public class UnsupportedProduct implements Product, AnalyticProductInterface, Serializable {
 
 	private static final long serialVersionUID = 5375406324063846793L;
 	private final Exception exception;
@@ -34,7 +34,7 @@ public class UnsupportedProduct implements ProductInterface, AnalyticProductInte
 	}
 
 	@Override
-	public Object getValue(double evaluationTime, ModelInterface model) {
+	public Object getValue(double evaluationTime, Model model) {
 		throw exception instanceof RuntimeException ? (RuntimeException)exception : new RuntimeException(exception);
 	}
 

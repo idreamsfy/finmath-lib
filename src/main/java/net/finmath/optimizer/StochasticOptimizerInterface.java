@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christianfries.com.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 29.05.2015
  */
@@ -26,9 +26,9 @@ public interface StochasticOptimizerInterface {
 	RandomVariableInterface[] getBestFitParameters();
 
 	/**
-	 * @return the the root mean square error of achieved with the the best fit parameter
+	 * @return the the root mean square error achieved with the the best fit parameter
 	 */
-	RandomVariableInterface getRootMeanSquaredError();
+	double getRootMeanSquaredError();
 
 	/**
 	 * Get the number of iterations.

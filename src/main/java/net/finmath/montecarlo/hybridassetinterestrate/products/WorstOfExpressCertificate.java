@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christianfries.com.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 04.04.2015
  */
@@ -7,15 +7,15 @@
 package net.finmath.montecarlo.hybridassetinterestrate.products;
 
 import net.finmath.exception.CalculationException;
-import net.finmath.modelling.ModelInterface;
-import net.finmath.modelling.ProductInterface;
+import net.finmath.modelling.Model;
+import net.finmath.modelling.Product;
 import net.finmath.montecarlo.hybridassetinterestrate.HybridAssetLIBORModelMonteCarloSimulationInterface;
 import net.finmath.stochastic.RandomVariableInterface;
 
 /**
  * @author Christian Fries
  */
-public class WorstOfExpressCertificate implements ProductInterface {
+public class WorstOfExpressCertificate implements Product {
 
 	final double maturity;	
 	final double[] strikeLevels;
@@ -40,7 +40,7 @@ public class WorstOfExpressCertificate implements ProductInterface {
 	 * @see net.finmath.modelling.ProductInterface#getValue(double, net.finmath.modelling.ModelInterface)
 	 */
 	@Override
-	public Object getValue(double evaluationTime, ModelInterface model) {
+	public Object getValue(double evaluationTime, Model model) {
 		return null;
 	}
 	

@@ -7,7 +7,6 @@ package net.finmath.montecarlo.interestrate.modelplugins;
 
 import java.util.Arrays;
 
-import net.finmath.montecarlo.RandomVariable;
 import net.finmath.stochastic.RandomVariableInterface;
 import net.finmath.time.TimeDiscretizationInterface;
 
@@ -74,10 +73,14 @@ public class LIBORCovarianceModelFromVolatilityAndCorrelation extends AbstractLI
      */
     @Override
     public RandomVariableInterface getCovariance(int timeIndex, int component1, int component2, RandomVariableInterface[] realizationAtTimeIndex) {
-        RandomVariableInterface covariance = new RandomVariable(0.0, correlationModel.getCorrelation(timeIndex, component1, component2));
-        covariance = covariance.mult(volatilityModel.getVolatility(timeIndex, component1))
-                .mult(volatilityModel.getVolatility(timeIndex, component2));
 
+		RandomVariableInterface volatilityOfComponent1 = volatilityModel.getVolatility(timeIndex, component1);
+		RandomVariableInterface volatilityOfComponent2 = volatilityModel.getVolatility(timeIndex, component2);
+    	
+		double					correlationOfComponent1And2 = correlationModel.getCorrelation(timeIndex, component1, component2);
+    	
+		RandomVariableInterface covariance = volatilityOfComponent1.mult(volatilityOfComponent2).mult(correlationOfComponent1And2);
+    	
         return covariance;
     }
 

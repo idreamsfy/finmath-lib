@@ -1,5 +1,5 @@
 /*
- * (c) Copyright Christian P. Fries, Germany. All rights reserved. Contact: email@christianfries.com.
+ * (c) Copyright Christian P. Fries, Germany. Contact: email@christian-fries.de.
  *
  * Created on 12.07.2014
  */
@@ -184,7 +184,7 @@ public class LevenbergMarquardtTest {
 	 * 
 	 * The test uses a finite difference approximation for the derivative.
 	 * 
-	 * @throws SolverException
+	 * @throws SolverException Thrown if the solver fails to find a solution.
 	 */
 	@Test
 	public void testBoothFunction() throws SolverException {
@@ -230,7 +230,7 @@ public class LevenbergMarquardtTest {
 	 * 
 	 * The test uses a a analytic calculation of derivative.
 	 * 
-	 * @throws SolverException
+	 * @throws SolverException Thrown if the solver fails to find a solution.
 	 */
 	@Test
 	public void testBoothFunctionWithAnalyticDerivative() throws SolverException {
