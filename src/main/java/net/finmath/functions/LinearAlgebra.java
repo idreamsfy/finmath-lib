@@ -62,21 +62,21 @@ public class LinearAlgebra {
 	 * <li>x is an n - vector given as double[n],</li>
 	 * </ul>
 	 * 
-	 * @param A The matrix (left hand side of the linear equation).
+	 * @param matrixA The matrix A (left hand side of the linear equation).
 	 * @param b The vector (right hand of the linear equation).
 	 * @return A solution x to A x = b.
 	 */
-	public static double[] solveLinearEquation(double[][] A, double[] b) {
+	public static double[] solveLinearEquation(double[][] matrixA, double[] b) {
 
 		if(isSolverUseApacheCommonsMath) {
-			Array2DRowRealMatrix matrix = new Array2DRowRealMatrix(A);
+			Array2DRowRealMatrix matrix = new Array2DRowRealMatrix(matrixA);
 
 			DecompositionSolver solver;
 			if(matrix.getColumnDimension() == matrix.getRowDimension()) {
 				solver = new LUDecomposition(matrix).getSolver();			
 			}
 			else {
-				solver = new QRDecomposition(new Array2DRowRealMatrix(A)).getSolver();			
+				solver = new QRDecomposition(new Array2DRowRealMatrix(matrixA)).getSolver();			
 			}
 
 			// Using SVD - very slow
@@ -85,7 +85,7 @@ public class LinearAlgebra {
 			return solver.solve(new Array2DRowRealMatrix(b)).getColumn(0);
 		}
 		else {
-			return org.jblas.Solve.solve(new org.jblas.DoubleMatrix(A), new org.jblas.DoubleMatrix(b)).data;
+			return org.jblas.Solve.solve(new org.jblas.DoubleMatrix(matrixA), new org.jblas.DoubleMatrix(b)).data;
 
 			// For use of colt:
 			// cern.colt.matrix.linalg.Algebra linearAlgebra = new cern.colt.matrix.linalg.Algebra();
@@ -213,24 +213,24 @@ public class LinearAlgebra {
 		}
 
 		class EigenValueIndex implements Comparable<EigenValueIndex> {
-			private int index;
-			Double value;
+			private int	index;
+			private Double value;
 
-			public EigenValueIndex(int index, double value) {
+			EigenValueIndex(int index, double value) {
 				this.index = index; this.value = value;
 			}
 
 			@Override
 			public int compareTo(EigenValueIndex o) { return o.value.compareTo(value); }
-		};
-		List<EigenValueIndex> eigenValueIndices = new ArrayList<EigenValueIndex>();
+		}
+        List<EigenValueIndex> eigenValueIndices = new ArrayList<EigenValueIndex>();
 		for(int i=0; i<eigenValues.length; i++) eigenValueIndices.add(i,new EigenValueIndex(i,eigenValues[i]));
 		Collections.sort(eigenValueIndices);
 
 		// Extract factors corresponding to the largest eigenvalues
 		double[][] factorMatrix = new double[eigenValues.length][numberOfFactors];
 		for (int factor = 0; factor < numberOfFactors; factor++) {
-			int		eigenVectorIndex	= (int) eigenValueIndices.get(factor).index;
+			int		eigenVectorIndex	= eigenValueIndices.get(factor).index;
 			double	eigenValue			= eigenValues[eigenVectorIndex];
 			double	signChange			= eigenVectorMatrix[0][eigenVectorIndex] > 0.0 ? 1.0 : -1.0;		// Convention: Have first entry of eigenvector positive. This is to make results more consistent.
 			double  eigenVectorNormSquared     = 0.0;

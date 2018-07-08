@@ -12,13 +12,12 @@ import org.apache.commons.math3.complex.Complex;
 
 import net.finmath.fouriermethod.CharacteristicFunctionInterface;
 import net.finmath.marketdata.model.curves.DiscountCurveInterface;
-import net.finmath.modelling.Model;
-import net.finmath.modelling.Product;
+import net.finmath.modelling.DescribedModel;
+import net.finmath.modelling.DescribedProduct;
 import net.finmath.modelling.ProductDescriptor;
 import net.finmath.modelling.SingleAssetProductDescriptor;
 import net.finmath.modelling.descriptor.HestonModelDescriptor;
 import net.finmath.modelling.descriptor.SingleAssetFourierProductFactory;
-import net.finmath.time.FloatingpointDate;
 
 /**
  * Implements the characteristic function of a Heston model.
@@ -58,10 +57,10 @@ import net.finmath.time.FloatingpointDate;
  * @author Andy Graf
  * @author Lorenzo Toricelli
  */
-public class HestonModel implements Model<HestonModelDescriptor>, ProcessCharacteristicFunctionInterface {
+public class HestonModel implements ProcessCharacteristicFunctionInterface, DescribedModel<HestonModelDescriptor> {
 
 	private final LocalDate referenceDate;
-	
+
 	private final double initialValue;
 
 	private final DiscountCurveInterface discountCurveForForwardRate;
@@ -95,11 +94,11 @@ public class HestonModel implements Model<HestonModelDescriptor>, ProcessCharact
 				descriptor.getRho()
 				);
 	}
-	
+
 	/**
 	 * Create a Heston model (characteristic function)
 	 * 
-	 * @param referenceDate The date representing the time t = 0. All other double times are following {@link FloatingpointDate}.
+	 * @param referenceDate The date representing the time t = 0. All other double times are following {@link net.finmath.time.FloatingpointDate}.
 	 * @param initialValue \( S_{0} \) - spot - initial value of S
 	 * @param discountCurveForForwardRate The curve specifying \( t \mapsto exp(- r^{\text{c}}(t) \cdot t) \) - with \( r^{\text{c}}(t) \) the risk free rate
 	 * @param volatility \( \sigma \) the initial volatility level
@@ -192,7 +191,7 @@ public class HestonModel implements Model<HestonModelDescriptor>, ProcessCharact
 								.multiply(2 * xi * xi))
 						.sqrt();
 
-				Complex A = iargument
+				Complex a = iargument
 						.multiply(rho * xi)
 						.subtract(kappa)
 						.subtract(gamma).multiply((-theta*kappa * time) / (xi * xi))
@@ -201,12 +200,12 @@ public class HestonModel implements Model<HestonModelDescriptor>, ProcessCharact
 								.multiply(0.5).add(new Complex(1).divide(gamma.multiply(time).exp())).log()
 								.add(gamma.multiply(time)).multiply((2 * theta*kappa) / (xi * xi)));
 
-				Complex B = iargument.multiply(iargument).add(iargument.multiply(-1)).multiply(-1)
+				Complex b = iargument.multiply(iargument).add(iargument.multiply(-1)).multiply(-1)
 						.divide(iargument.multiply(rho * xi).subtract(kappa)
 								.add(gamma.multiply(new Complex(1).divide(gamma.multiply(time).exp()).add(1)
 										.divide(new Complex(1).divide(gamma.multiply(time).exp()).subtract(1)))));
 
-				return A.add(B.multiply(volatility*volatility)).add(iargument.multiply(Math.log(initialValue) - logDiscountFactorForForward)).add(logDiscountFactorForDiscounting).exp();
+				return a.add(b.multiply(volatility*volatility)).add(iargument.multiply(Math.log(initialValue) - logDiscountFactorForForward)).add(logDiscountFactorForDiscounting).exp();
 			}
 		};
 	}
@@ -237,7 +236,7 @@ public class HestonModel implements Model<HestonModelDescriptor>, ProcessCharact
 	}
 
 	@Override
-	public Product<? extends ProductDescriptor> getProductFromDesciptor(ProductDescriptor productDescriptor) {
+	public DescribedProduct<? extends ProductDescriptor> getProductFromDesciptor(ProductDescriptor productDescriptor) {
 		return (new SingleAssetFourierProductFactory()).getProductFromDescription((SingleAssetProductDescriptor) productDescriptor);
 	}
 }

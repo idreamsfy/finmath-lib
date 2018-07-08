@@ -17,7 +17,6 @@ import java.util.concurrent.Future;
 import net.finmath.concurrency.FutureWrapper;
 import net.finmath.montecarlo.BrownianMotionInterface;
 import net.finmath.montecarlo.IndependentIncrementsInterface;
-import net.finmath.optimizer.SolverException;
 import net.finmath.stochastic.RandomVariableInterface;
 
 /**
@@ -52,9 +51,9 @@ public class ProcessEulerScheme extends AbstractProcess {
 
 	public enum Scheme {
 		EULER, PREDICTOR_CORRECTOR, EULER_FUNCTIONAL
-	};
+	}
 
-	private IndependentIncrementsInterface stochasticDriver;
+    private IndependentIncrementsInterface stochasticDriver;
 
 	private Scheme		scheme = Scheme.EULER;
 
@@ -179,7 +178,7 @@ public class ProcessEulerScheme extends AbstractProcess {
 				drift = getDrift(timeIndex - 1, discreteProcess[timeIndex - 1], null);
 			}
 			catch(Exception e) {
-				throw new RuntimeException("Drift calculaton failed at time " + getTime(timeIndex - 1), e);
+				throw new RuntimeException("Drift calculaton failed at time " + getTime(timeIndex - 1) + ". See cause for details.", e);
 			}
 
 			// Calculate new realization
@@ -194,7 +193,7 @@ public class ProcessEulerScheme extends AbstractProcess {
 				if (driftOfComponent == null) continue;
 
 				Callable<RandomVariableInterface> worker = new  Callable<RandomVariableInterface>() {
-					public RandomVariableInterface call() throws SolverException {
+					public RandomVariableInterface call() {
 						if(scheme == Scheme.EULER_FUNCTIONAL) currentState[componentIndex] = applyStateSpaceTransformInverse(componentIndex, discreteProcess[timeIndex - 1][componentIndex]);
 
 						RandomVariableInterface[]	factorLoadings		= getFactorLoading(timeIndex - 1, componentIndex, discreteProcess[timeIndex - 1]);

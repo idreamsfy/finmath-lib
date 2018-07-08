@@ -416,6 +416,40 @@ public class AnalyticFormulas {
 	}
 
 	/**
+	 * This static method calculated the vega of a call option under a Black-Scholes model
+	 * 
+	 * @param initialStockValue The initial value of the underlying, i.e., the spot.
+	 * @param riskFreeRate The risk free rate of the bank account numerarie.
+	 * @param volatility The Black-Scholes volatility.
+	 * @param optionMaturity The option maturity T.
+	 * @param optionStrike The option strike.
+	 * @return The vega of the option
+	 */
+	public static double blackScholesOptionTheta(
+			double initialStockValue,
+			double riskFreeRate,
+			double volatility,
+			double optionMaturity,
+			double optionStrike)
+	{
+		if(optionStrike <= 0.0 || optionMaturity <= 0.0)
+		{	
+			// The Black-Scholes model does not consider it being an option
+			return 0.0;
+		}
+		else
+		{
+			// Calculate theta
+			double dPlus = (Math.log(initialStockValue / optionStrike) + (riskFreeRate + 0.5 * volatility * volatility) * optionMaturity) / (volatility * Math.sqrt(optionMaturity));
+			double dMinus = dPlus - volatility * Math.sqrt(optionMaturity);
+
+			double theta = volatility * Math.exp(-0.5*dPlus*dPlus) / Math.sqrt(2.0 * Math.PI) / Math.sqrt(optionMaturity) / 2 * initialStockValue + riskFreeRate * optionStrike * Math.exp(-riskFreeRate * optionMaturity) * NormalDistribution.cumulativeDistribution(dMinus);
+
+			return theta;
+		}
+	}
+
+	/**
 	 * This static method calculated the rho of a call option under a Black-Scholes model
 	 * 
 	 * @param initialStockValue The initial value of the underlying, i.e., the spot.
@@ -745,13 +779,16 @@ public class AnalyticFormulas {
 	}
 
 	/**
-	 * Calculates the option value of a call, i.e., the payoff max(S(T)-K,0) P, where S follows a
-	 * normal process with constant volatility, i.e., a Bachelier model.
+	 * Calculates the option value of a call, i.e., the payoff max(S(T)-K,0), where S follows a
+	 * normal process with constant volatility, i.e., a Bachelier model
+	 * \[
+	 * 	\mathrm{d} S(t) = r S(t) \mathrm{d} t + \sigma \mathrm{d}W(t)
+	 * \]
 	 * 
-	 * @param forward The forward of the underlying.
-	 * @param volatility The Bachelier volatility.
+	 * @param forward The forward of the underlying \( F = S(T) \exp(r T) \).
+	 * @param volatility The Bachelier volatility \( \sigma \).
 	 * @param optionMaturity The option maturity T.
-	 * @param optionStrike The option strike.
+	 * @param optionStrike The option strike K.
 	 * @param payoffUnit The payoff unit (e.g., the discount factor)
 	 * @return Returns the value of a European call option under the Bachelier model.
 	 */
@@ -782,10 +819,13 @@ public class AnalyticFormulas {
 
 	/**
 	 * Calculates the option value of a call, i.e., the payoff max(S(T)-K,0) P, where S follows a
-	 * normal process with constant volatility, i.e., a Bachelier model.
+	 * normal process with constant volatility, i.e., a Bachelier model
+	 * \[
+	 * 	\mathrm{d} S(t) = r S(t) \mathrm{d} t + \sigma \mathrm{d}W(t)
+	 * \]
 	 * 
-	 * @param forward The forward of the underlying.
-	 * @param volatility The Bachelier volatility.
+	 * @param forward The forward of the underlying \( F = S(T) \exp(r T) \).
+	 * @param volatility The Bachelier volatility \( \sigma \).
 	 * @param optionMaturity The option maturity T.
 	 * @param optionStrike The option strike.
 	 * @param payoffUnit The payoff unit (e.g., the discount factor)
@@ -1020,20 +1060,20 @@ public class AnalyticFormulas {
 			/*
 			 * General non-ATM case no prob with log(F/K)
 			 */
-			double FK = underlying * strike;
+			double forwardTimesStrike = underlying * strike;
 
-			double z = nu/alpha * Math.pow(FK, (1-beta)/2) * Math.log(underlying / strike); 
+			double z = nu/alpha * Math.pow(forwardTimesStrike, (1-beta)/2) * Math.log(underlying / strike); 
 
 			double x = Math.log((Math.sqrt(1- 2*rho * z + z*z) + z - rho)/(1 - rho));
 
-			double term1 = alpha / Math.pow(FK,(1-beta)/2) 
+			double term1 = alpha / Math.pow(forwardTimesStrike,(1-beta)/2) 
 					/ (1 + Math.pow(1-beta,2)/24*Math.pow(Math.log(underlying/strike),2)
 							+ Math.pow(1-beta,4)/1920 * Math.pow(Math.log(underlying/strike),4));
 
 			double term2 = (Math.abs(x-z) < 1E-10) ? 1 : z / x;
 
-			double term3 = 1 + (Math.pow(1 - beta,2)/24 *Math.pow(alpha, 2)/Math.pow(FK, 1-beta)
-					+ rho*beta*nu*alpha / 4 / Math.pow(FK, (1-beta)/2)
+			double term3 = 1 + (Math.pow(1 - beta,2)/24 *Math.pow(alpha, 2)/Math.pow(forwardTimesStrike, 1-beta)
+					+ rho*beta*nu*alpha / 4 / Math.pow(forwardTimesStrike, (1-beta)/2)
 					+ (2-3*rho*rho)/24 * nu*nu) *maturity;
 
 

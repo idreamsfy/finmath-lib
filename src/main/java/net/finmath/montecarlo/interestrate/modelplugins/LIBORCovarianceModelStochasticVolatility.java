@@ -12,7 +12,6 @@ import net.finmath.exception.CalculationException;
 import net.finmath.montecarlo.BrownianMotionInterface;
 import net.finmath.montecarlo.BrownianMotionView;
 import net.finmath.montecarlo.model.AbstractModelInterface;
-import net.finmath.montecarlo.process.AbstractProcess;
 import net.finmath.montecarlo.process.AbstractProcessInterface;
 import net.finmath.montecarlo.process.ProcessEulerScheme;
 import net.finmath.stochastic.RandomVariableInterface;
@@ -48,6 +47,8 @@ import net.finmath.time.TimeDiscretizationInterface;
  * @author Christian Fries
  */
 public class LIBORCovarianceModelStochasticVolatility extends AbstractLIBORCovarianceModelParametric {
+
+	private static final long serialVersionUID = -1907512921302707075L;
 
 	private AbstractLIBORCovarianceModelParametric covarianceModel;
 	private BrownianMotionInterface brownianMotion;
@@ -132,7 +133,7 @@ public class LIBORCovarianceModelStochasticVolatility extends AbstractLIBORCovar
 		synchronized (this) {
 			if(stochasticVolatilityScalings == null) {
 				stochasticVolatilityScalings = new ProcessEulerScheme(brownianMotion);
-				((AbstractProcess) stochasticVolatilityScalings).setModel(new AbstractModelInterface() {
+				stochasticVolatilityScalings.setModel(new AbstractModelInterface() {
 
 					@Override
 					public void setProcess(AbstractProcessInterface process) {
@@ -149,7 +150,7 @@ public class LIBORCovarianceModelStochasticVolatility extends AbstractLIBORCovar
 					}
 
 					@Override
-					public RandomVariableInterface getNumeraire(double time) throws CalculationException {
+					public RandomVariableInterface getNumeraire(double time) {
 						return null;
 					}
 
@@ -194,7 +195,7 @@ public class LIBORCovarianceModelStochasticVolatility extends AbstractLIBORCovar
 					}
 
 					@Override
-					public AbstractModelInterface getCloneWithModifiedData(Map<String, Object> dataModified) throws CalculationException {
+					public AbstractModelInterface getCloneWithModifiedData(Map<String, Object> dataModified) {
 						throw new UnsupportedOperationException("Method not implemented");
 					}
 				});

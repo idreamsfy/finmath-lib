@@ -31,6 +31,8 @@ import net.finmath.stochastic.RandomVariableInterface;
  */
 public class HullWhiteLocalVolatilityModel extends AbstractLIBORCovarianceModelParametric {
 
+	private static final long serialVersionUID = -4182083344704425769L;
+
 	private final AbstractLIBORCovarianceModelParametric covarianceModel;
 	private final double periodLength;
 
@@ -75,7 +77,7 @@ public class HullWhiteLocalVolatilityModel extends AbstractLIBORCovarianceModelP
 
 	@Override
 	public AbstractLIBORCovarianceModelParametric getCloneWithModifiedParameters(double[] parameters) {
-		return new HullWhiteLocalVolatilityModel((AbstractLIBORCovarianceModelParametric) covarianceModel.getCloneWithModifiedParameters(parameters), periodLength);
+		return new HullWhiteLocalVolatilityModel(covarianceModel.getCloneWithModifiedParameters(parameters), periodLength);
 	}
 
 	@Override

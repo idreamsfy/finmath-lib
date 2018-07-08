@@ -1,9 +1,7 @@
 package net.finmath.concurrency;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Implementation of the Future interface,
@@ -36,12 +34,12 @@ public class FutureWrapper<V> implements Future<V> {
 	}
 
 	@Override
-	public V get() throws InterruptedException, ExecutionException {
+	public V get() {
 		return object;
 	}
 
 	@Override
-	public V get(long arg0, TimeUnit arg1) throws InterruptedException, ExecutionException, TimeoutException {
+	public V get(long arg0, TimeUnit arg1) {
 		return object;
 	}
 

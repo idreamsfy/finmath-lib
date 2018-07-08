@@ -5,6 +5,81 @@ finmath lib Release Notes
 
 # Release Notes
 
+## 3.2.9 (30.06.2018)
+
+###
+
+- Clean up of the model hierarchy.
+
+### Model and Product Interfaces
+
+- Partially reverting the refactoring from 3.2.0 (removing type parameter from model 
+  and product interfaces). Adding dedicated interfaces `DecribedProduct<T extends ProductDescriptor>` and `DecribedModel<T extends ModelDescriptor>`
+  for model and products allowing construction from product descriptors. For details 
+  see [concepts "separation of product and model"](concepts/separationofproductandmodel).
+- The interface `net.finmath.modelling.Model<T extends ModelDescriptor>` has been renamed/refactored to `net.finmath.modelling.ModelInterface`.
+- The interface `net.finmath.modelling.Product<T extends ProductDescriptor>` has been renamed/refactored to `net.finmath.modelling.ProductInterface`.
+- Adding (extracting) additional interfaces `DescribedModel<T extends ModelDescriptor>` 
+  and `DescribedProduct<T extends ProductDescriptor>`.
+
+### Finite Difference Methods
+
+- Merged initial version of the finite difference methods.
+- Added a unit test illustrating the use of model descriptors and product descriptors 
+  for a Black-Scholes model and a European option on a Monte-Carlo-, Fourier-Transform-, and 
+  Finite-Difference-Method-Factory.
+
+### Documentation
+
+- Model and product interfaces are described in [concepts "separation of product and model"](concepts/separationofproductandmodel).
+  
+## 3.2.5 (09.06.2018)
+
+### Market Data: Bond Curves
+
+- Added implementation for Bond curve calibration via Local Linear Regression (see https://ssrn.com/abstract=3073942 ). See package net.finmath.marketdata.model.bond
+
+### LIBOR Market Model
+
+- Fixed an inconsistency in the LMM curve interpolation. The LMM curve interpolation is now 100% consistent with the interpolation of the provided forward/discount curve, given that the forward curves allows for an interpolation on short periods (Note: not all forward curves allow this, positive example are forward curves from discout curves and NSS curves).
+
+## 3.2.3 (10.05.2018)
+
+### LIBOR Market Model
+
+- LIBOR Volatility and Correlation models are immutable.
+
+The method `setParameter` has been replaced by
+`getCloneWithModifiedParameter`.
+
+Instead of
+
+	newModel = model.clone();
+	newModel.setParameter(parameter);
+
+call
+
+	newModel = model.getCloneWithModifiedParameter(parameter);
+
+
+## 3.2.2 (05.05.2018)
+
+### Monte-Carlo Simulation
+
+- API Change: The implementation of the method getQuantile of RandomVariableInterface has been changed to comply with its JavaDoc. In case backward compatibbility is requied replace getQuantile(x) by getQuantile(1.0-x)
+- Performance improvement by caching of SVD solver. This has some relevance for the valuation of forward sensitivities or MVA, see https://ssrn.com/abstract=3018165
+- Small improvement to exception message.
+
+### LIBOR Market Model
+
+- Fixed bug which could lead to race condition when performing a multi-threadded calibration of the correlation.
+- LMM covariance model is serializable using Java standard serializer.
+
+### General Improvements
+
+- Improved JavaDoc.
+- Updated maven plug-ins.
+
 ## 3.2.0 (18.02.2018)
 
 ### General Refactoring - Interfaces (see Concepts / Separation of Model and Products)

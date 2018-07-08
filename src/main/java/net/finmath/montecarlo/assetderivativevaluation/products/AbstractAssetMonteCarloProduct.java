@@ -4,7 +4,6 @@
 package net.finmath.montecarlo.assetderivativevaluation.products;
 
 import net.finmath.exception.CalculationException;
-import net.finmath.modelling.ProductDescriptor;
 import net.finmath.montecarlo.AbstractMonteCarloProduct;
 import net.finmath.montecarlo.MonteCarloSimulationInterface;
 import net.finmath.montecarlo.assetderivativevaluation.AssetModelMonteCarloSimulationInterface;
@@ -15,21 +14,27 @@ import net.finmath.stochastic.RandomVariableInterface;
  * 
  * @author Christian Fries
  */
-public abstract class AbstractAssetMonteCarloProduct<T extends ProductDescriptor> extends AbstractMonteCarloProduct<T> {
+public abstract class AbstractAssetMonteCarloProduct extends AbstractMonteCarloProduct {
 
 	/**
 	 * 
 	 */
 	public AbstractAssetMonteCarloProduct() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public abstract RandomVariableInterface getValue(double evaluationTime, AssetModelMonteCarloSimulationInterface model) throws CalculationException;
+    public abstract RandomVariableInterface getValue(double evaluationTime, AssetModelMonteCarloSimulationInterface model) throws CalculationException;
 
-	@Override
-	public RandomVariableInterface getValue(double evaluationTime, MonteCarloSimulationInterface model) throws CalculationException {
-		// This product requires an AssetModelMonteCarloSimulationInterface model, otherwise there will be a class cast exception
-		return getValue(evaluationTime, (AssetModelMonteCarloSimulationInterface)model);
-	}
+    @Override
+    public RandomVariableInterface getValue(double evaluationTime, MonteCarloSimulationInterface model) throws CalculationException {
+    	// This product requires an AssetModelMonteCarloSimulationInterface model, otherwise there will be a class cast exception
+		if(model instanceof AssetModelMonteCarloSimulationInterface) {
+			return getValue(evaluationTime, (AssetModelMonteCarloSimulationInterface)model);
+		}
+		else {
+			throw new IllegalArgumentException("The product " + this.getClass()
+			+ " cannot be valued against a model " + model.getClass() + "."
+			+ "It requires a model of type " + AssetModelMonteCarloSimulationInterface.class + ".");
+		}
+    }
 }
